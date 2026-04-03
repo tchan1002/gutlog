@@ -39,7 +39,6 @@ interface MealTrayProps {
   onOpenChange: (open: boolean) => void
   selectedFoods: SelectedFood[]
   onServingsChange: (foodId: string, servings: number) => void
-  userId: string
 }
 
 type MealLabel = 'breakfast' | 'lunch' | 'dinner' | 'snack'
@@ -59,7 +58,6 @@ export function MealTray({
   onOpenChange,
   selectedFoods,
   onServingsChange,
-  userId,
 }: MealTrayProps) {
   const router = useRouter()
   const [mealLabel, setMealLabel] = useState<MealLabel>(getMealSuggestion())
@@ -89,7 +87,6 @@ export function MealTray({
 
       // Insert all food logs
       const logs = selectedFoods.map(food => ({
-        user_id: userId,
         food_id: food.id,
         meal_label: mealLabel,
         servings: food.servings,

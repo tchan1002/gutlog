@@ -57,36 +57,38 @@ export function FoodGrid({
 
   return (
     <div className="space-y-4">
-      {/* Add Food Button and Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {onAddFood && (
-          <Button
-            onClick={onAddFood}
-            size="lg"
-            className="w-full sm:w-auto"
-          >
-            + Add Food Item
-          </Button>
-        )}
-        <div className="relative flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-          <Input
-            type="search"
-            placeholder="Search foods..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+      {/* Search Bar */}
+      <div className="relative">
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+        <Input
+          type="search"
+          placeholder="Search foods..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+        />
       </div>
 
       {/* Food Grid */}
-      {filteredFoods.length === 0 ? (
+      {filteredFoods.length === 0 && !onAddFood ? (
         <div className="text-center py-8 text-muted-foreground">
           No foods match your search
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {/* Add Food Tile - Always First */}
+          {onAddFood && (
+            <Button
+              onClick={onAddFood}
+              variant="outline"
+              className="h-auto min-h-[80px] flex flex-col items-center justify-center gap-2 p-3 border-dashed"
+            >
+              <span className="text-3xl">+</span>
+              <span className="text-xs font-medium">Add Food</span>
+            </Button>
+          )}
+
+          {/* Food Items */}
           {filteredFoods.map((food) => {
             const isSelected = selectedFoodIds.has(food.id)
             return (

@@ -17,14 +17,12 @@ import { createClient } from '@/lib/supabase'
 interface AddFoodDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  userId: string
   onSuccess: () => void
 }
 
 export function AddFoodDialog({
   open,
   onOpenChange,
-  userId,
   onSuccess,
 }: AddFoodDialogProps) {
   const [name, setName] = useState('')
@@ -68,7 +66,6 @@ export function AddFoodDialog({
       const { error: insertError } = await supabase
         .from('food_library')
         .insert({
-          user_id: userId,
           name: name.trim(),
           emoji: emoji.trim() || '🍽️',
           category: category.trim() || null,

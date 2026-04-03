@@ -12,8 +12,6 @@ import { ActivitySelector } from '@/components/gut/ActivitySelector'
 
 export default function GutLogPage() {
   const router = useRouter()
-  // Use hardcoded test user ID
-  const userId = '00000000-0000-0000-0000-000000000001'
   const supabase = createClient()
 
   const [bristolScore, setBristolScore] = useState<number | null>(null)
@@ -44,7 +42,6 @@ export default function GutLogPage() {
 
     try {
       const { error: insertError } = await supabase.from('gut_logs').insert({
-        user_id: userId,
         bristol_score: bristolScore,
         gut_score: gutScore,
         tags: symptoms,

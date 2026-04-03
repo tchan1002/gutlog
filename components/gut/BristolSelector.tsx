@@ -8,13 +8,13 @@ interface BristolSelectorProps {
 }
 
 const bristolTypes = [
-  { score: 1, label: 'Hard separate lumps' },
-  { score: 2, label: 'Lumpy sausage' },
-  { score: 3, label: 'Sausage with cracks' },
-  { score: 4, label: 'Smooth sausage (ideal)' },
-  { score: 5, label: 'Soft blobs' },
-  { score: 6, label: 'Mushy pieces' },
-  { score: 7, label: 'Entirely liquid' },
+  { score: 1, label: 'Hard separate lumps', emoji: '💩' },
+  { score: 2, label: 'Lumpy sausage', emoji: '💩' },
+  { score: 3, label: 'Sausage with cracks', emoji: '💩' },
+  { score: 4, label: 'Smooth sausage (ideal)', emoji: '💩' },
+  { score: 5, label: 'Soft blobs', emoji: '💩' },
+  { score: 6, label: 'Mushy pieces', emoji: '💩' },
+  { score: 7, label: 'Entirely liquid', emoji: '💩' },
 ]
 
 export function BristolSelector({ value, onChange }: BristolSelectorProps) {
@@ -29,7 +29,7 @@ export function BristolSelector({ value, onChange }: BristolSelectorProps) {
             onClick={() => onChange(type.score)}
             className="h-auto min-h-[48px] justify-start text-left px-4 py-3"
           >
-            <span className="text-2xl mr-3">💩</span>
+            <span className="text-2xl mr-3">{type.emoji}</span>
             <span className="flex flex-col">
               <span className="font-semibold">Type {type.score}</span>
               <span className="text-xs opacity-80">{type.label}</span>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { FoodGrid, type FoodLibraryItem } from '@/components/food/FoodGrid'
 import { MealTray } from '@/components/food/MealTray'
+import { AddFoodDialog } from '@/components/food/AddFoodDialog'
 import { Button } from '@/components/ui/button'
 
 interface SelectedFood extends FoodLibraryItem {
@@ -11,41 +12,17 @@ interface SelectedFood extends FoodLibraryItem {
 }
 
 export default function FoodLogPage() {
-  // Use hardcoded test user ID
-  const userId = '00000000-0000-0000-0000-000000000001'
   const [foods, setFoods] = useState<FoodLibraryItem[]>([])
   const [selectedFoods, setSelectedFoods] = useState<Map<string, SelectedFood>>(new Map())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showMealTray, setShowMealTray] = useState(false)
+  const [showAddFood, setShowAddFood] = useState(false)
 
-  // Fetch food library
+  // Fetch food library on mount
   useEffect(() => {
-    async function fetchFoods() {
-      try {
-        setLoading(true)
-        setError(null)
-        const supabase = createClient()
-
-        const { data, error: fetchError } = await supabase
-          .from('food_library')
-          .select('id, name, emoji, calories_per_serving, serving_size')
-          .eq('user_id', userId)
-          .order('name')
-
-        if (fetchError) throw fetchError
-
-        setFoods(data || [])
-      } catch (err) {
-        console.error('Error fetching foods:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load foods')
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchFoods()
-  }, [userId])
+  }, [])
 
   const handleFoodToggle = (foodId: string) => {
     setSelectedFoods((prev) => {
@@ -90,6 +67,34 @@ export default function FoodLogPage() {
     setShowMealTray(open)
   }
 
+  const handleAddFoodSuccess = () => {
+    // Refresh food list after adding new item
+    fetchFoods()
+  }
+
+  // Extract fetchFoods function so it can be reused
+  async function fetchFoods() {
+    try {
+      setLoading(true)
+      setError(null)
+      const supabase = createClient()
+
+      const { data, error: fetchError } = await supabase
+        .from('food_library')
+        .select('id, name, emoji, calories_per_serving, serving_size')
+        .order('name')
+
+      if (fetchError) throw fetchError
+
+      setFoods(data || [])
+    } catch (err) {
+      console.error('Error fetching foods:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load foods')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Show loading skeleton
   if (loading) {
     return (
@@ -132,14 +137,15 @@ export default function FoodLogPage() {
         foods={foods}
         selectedFoodIds={new Set(selectedFoods.keys())}
         onFoodToggle={handleFoodToggle}
+        onAddFood={() => setShowAddFood(true)}
       />
 
       {/* Floating Action Button */}
       {selectedFoods.size > 0 && (
-        <div className="fixed bottom-6 left-0 right-0 flex justify-center px-4 pointer-events-none">
+        <div className="fixed bottom-6 left-0 right-0 flex justify-center px-4 pointer-events-none z-50">
           <Button
             size="lg"
-            className="pointer-events-auto shadow-lg min-w-[200px]"
+            className="pointer-events-auto shadow-2xl min-w-[200px] text-base font-semibold"
             onClick={handleReviewMeal}
           >
             Review Meal ({selectedFoods.size} {selectedFoods.size === 1 ? 'item' : 'items'})
@@ -153,7 +159,13 @@ export default function FoodLogPage() {
         onOpenChange={handleMealTrayClose}
         selectedFoods={selectedFoodArray}
         onServingsChange={handleServingsChange}
-        userId={userId}
+      />
+
+      {/* Add Food Dialog */}
+      <AddFoodDialog
+        open={showAddFood}
+        onOpenChange={setShowAddFood}
+        onSuccess={handleAddFoodSuccess}
       />
     </div>
   )
